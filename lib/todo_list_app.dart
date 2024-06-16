@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
+import 'screens/tasks_master.dart';
 
-
-void main(){
-  runApp(const TodoListApp());
-}
 
 class TodoListApp extends StatefulWidget{
   const TodoListApp({super.key});
@@ -20,14 +17,7 @@ class _TodoListAppState extends State<TodoListApp>{
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: Scaffold(
-            appBar: AppBar(
-              title: const Text('Todo List'),
-            ),
-            body: const Center(
-              child: Text('Pour le TP Flutter'),
-            )
-        )
+        home: TasksMaster(),
     );
   }
 
