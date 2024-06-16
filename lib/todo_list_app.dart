@@ -16,18 +16,18 @@ class _TodoListAppState extends State<TodoListApp>{
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Todo List',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Todo List'),
+        title: 'Todo List',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
         ),
-        body: const Center(
-          child: Text('Pour le TP Flutter'),
+        home: Scaffold(
+            appBar: AppBar(
+              title: const Text('Todo List'),
+            ),
+            body: const Center(
+              child: Text('Pour le TP Flutter'),
+            )
         )
-      )
     );
   }
 
