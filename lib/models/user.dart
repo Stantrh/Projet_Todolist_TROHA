@@ -1,21 +1,29 @@
 import 'task.dart';
+import 'package:uuid/uuid.dart';
 
-class User{
 
-  String id; // identifiant
-  final String firstname; // prénom
-  final String lastname; // nom
-  final String email; // email
-  final String password; // mot de passe
-  final List<Task> tasks; // liste de tâches dont l'user est l'auteur
+var uuid = const Uuid();
 
+class User {
+  String id;
+  String firstName;
+  String lastName;
+  String email;
+  String password;
+  List<Task> tasks;
 
   User({
-    String? id,
-    required this.firstname,
-    required this.lastname,
+    required this.firstName,
+    required this.lastName,
     required this.email,
     required this.password,
-    this.tasks = const [], // Un utilisateur peut être créé sans tâches de base, souvent le cas
-  }) : id = id ?? uuid.v4();
+    List<Task>? tasks,
+    String? id,
+  })  : id = id ?? uuid.v4(),
+        tasks = tasks ?? [];
+
+  @override
+  String toString() {
+    return 'User(id: $id, firstName: $firstName, lastName: $lastName, email: $email)';
+  }
 }
