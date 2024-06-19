@@ -1,63 +1,52 @@
 import 'package:flutter/material.dart';
-import '../services/task_service.dart';
+import 'package:provider/provider.dart';
 import '../widgets/task_preview.dart';
-import '../models/task.dart';
+import '../providers/tasks_provider.dart';
 import 'task_form.dart';
 
-class TasksMaster extends StatefulWidget {
-  @override
-  _TasksMasterState createState() => _TasksMasterState();
-}
-
-class _TasksMasterState extends State<TasksMaster> {
-  final TaskService _taskService = TaskService();
-  List<Task> _tasks = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchTasks();
-  }
-
-  Future<void> _fetchTasks() async {
-    final tasks = await _taskService.fetchTasks();
-    setState(() {
-      _tasks = tasks;
-    });
-  }
-
-  void _addTask(Task task) {
-    setState(() {
-      _tasks.add(task);
-    });
-  }
+class TasksMaster extends StatelessWidget {
+  const TasksMaster({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tasks Master'),
+        title: const Text('Tasks Master'),
       ),
-      body: _tasks.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: _tasks.length,
-        itemBuilder: (context, index) {
-          final task = _tasks[index];
-          return TaskPreview(task: task);
+      body: FutureBuilder(
+        future: Provider.of<TasksProvider>(context, listen: false).fetchTasks(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return Consumer<TasksProvider>(
+              builder: (context, tasksProvider, child) {
+                final tasks = tasksProvider.tasks;
+                if (tasks.isEmpty) {
+                  return const Center(child: Text('No tasks available'));
+                }
+                return ListView.builder(
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    final task = tasks[index];
+                    return TaskPreview(task: task);
+                  },
+                );
+              },
+            );
+          }
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final newTask = await Navigator.push(
+          await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TaskForm()),
+            MaterialPageRoute(builder: (context) => const TaskForm()),
           );
-          if (newTask != null) {
-            _addTask(newTask);
-          }
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

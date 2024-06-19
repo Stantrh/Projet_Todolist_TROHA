@@ -35,7 +35,6 @@ class TaskService {
   }
 
   Future<void> createTask(Task task) async {
-    await Future.delayed(const Duration(seconds: 1)); // Simuler un délai pour l'ajout
     _tasks.add(task);
   }
 }
