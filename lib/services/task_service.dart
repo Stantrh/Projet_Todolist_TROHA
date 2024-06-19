@@ -12,7 +12,7 @@ class TaskService {
     await Future.delayed(Duration(seconds: 2));
 
     if (_tasks.isEmpty) {
-      _tasks = List.generate(5, (index) {
+      _tasks = List.generate(100, (index) {
         return Task(
           author: User(
             firstName: _faker.person.firstName(),
