@@ -25,9 +25,11 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Task? getTaskById(String id) {
-  //   return _tasks.firstWhere((task) => task.id == id, orElse: () => null);
-  // }
+  void updateTask(String id, Task task){
+    _taskService.updateTask(id, task);
+    notifyListeners();
+  }
+
   Task? getTaskById(String id) {
     return _tasks.firstWhereOrNull((task) => task.id == id);
   }

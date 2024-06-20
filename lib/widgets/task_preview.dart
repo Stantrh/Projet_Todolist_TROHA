@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/task.dart';
-import '../screens/task_details.dart';
+import '../screens/task_form.dart'; // Assurez-vous d'importer TaskForm
 
 class TaskPreview extends StatelessWidget {
   final Task task;
@@ -12,15 +12,15 @@ class TaskPreview extends StatelessWidget {
     return ListTile(
       leading: Icon(
         task.completed ? Icons.check_circle : Icons.circle,
-        color: task.completed ? Colors.green : Colors.red,
+        color: task.completed ? Colors.lightGreen : Colors.grey,
       ),
       title: Text(task.content),
-      tileColor: task.completed ? Colors.green[100] : Colors.red[100],
+      tileColor: task.completed ? Colors.green[100] : Colors.white54,
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TaskDetails(task: task),
+        showDialog(
+          context: context,
+          builder: (context) => Dialog(
+            child: TaskForm(formMode: FormMode.Edit, task: task),
           ),
         );
       },

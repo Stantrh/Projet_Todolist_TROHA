@@ -12,6 +12,7 @@ class TasksMaster extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tasks Master'),
+        leading: const Icon(Icons.gesture_sharp, color: Colors.blue),
       ),
       body: FutureBuilder(
         future: Provider.of<TasksProvider>(context, listen: false).fetchTasks(),
@@ -40,10 +41,12 @@ class TasksMaster extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const TaskForm()),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => const Dialog(
+              child: TaskForm(formMode: FormMode.Add),
+            ),
           );
         },
         child: const Icon(Icons.add),

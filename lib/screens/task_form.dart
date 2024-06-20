@@ -5,8 +5,13 @@ import '../models/user.dart';
 import '../models/priority.dart';
 import '../providers/tasks_provider.dart';
 
+enum FormMode { Add, Edit }
+
 class TaskForm extends StatefulWidget {
-  const TaskForm({super.key});
+  final FormMode formMode;
+  final Task? task;
+
+  const TaskForm({super.key, required this.formMode, this.task});
 
   @override
   _TaskFormState createState() => _TaskFormState();
@@ -14,35 +19,60 @@ class TaskForm extends StatefulWidget {
 
 class _TaskFormState extends State<TaskForm> {
   final _formKey = GlobalKey<FormState>();
-  String _content = '';
-  bool _completed = false;
-  final DateTime _dueDate = DateTime.now();
-  Priority _priority = Priority.normal;
+  late String _id;
+  late String _content;
+  late DateTime _dueDate;
+  late Priority _priority;
+  late bool _completed;
+  late DateTime _updatedAt;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.formMode == FormMode.Edit) {
+      _id = widget.task!.id;
+      _content = widget.task!.content;
+      _dueDate = widget.task!.dueDate;
+      _priority = widget.task!.priority;
+      _completed = widget.task!.completed;
+      _updatedAt = widget.task!.updatedAt;
+    } else {
+      _content = '';
+      _dueDate = DateTime.now();
+      _priority = Priority.normal;
+      _completed = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Task'),
-      ),
-      body: Padding(
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Content'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some content';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _content = value!;
-                },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextFormField(
+              initialValue: _content,
+              decoration: const InputDecoration(labelText: 'Content'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some content';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                _content = value!;
+              },
+            ),
+            if (widget.formMode == FormMode.Edit)
+              ListTile(
+                title: Text('Last Updated: ${_updatedAt.toString()}'),
+                onTap: null, // Désactive le tap pour empêcher l'édition
               ),
+            if(widget.formMode == FormMode.Edit)
               SwitchListTile(
                 title: const Text('Completed'),
                 value: _completed,
@@ -52,54 +82,60 @@ class _TaskFormState extends State<TaskForm> {
                   });
                 },
               ),
-              DropdownButtonFormField<Priority>(
-                decoration: const InputDecoration(labelText: 'Priority'),
-                value: _priority,
-                items: Priority.values.map((Priority priority) {
-                  return DropdownMenuItem<Priority>(
-                    value: priority,
-                    child: Text(priority.toString().split('.').last),
-                  );
-                }).toList(),
-                onChanged: (Priority? newValue) {
+            DropdownButtonFormField<Priority>(
+              value: _priority,
+              decoration: const InputDecoration(labelText: 'Priority'),
+              items: Priority.values.map((Priority priority) {
+                return DropdownMenuItem<Priority>(
+                  value: priority,
+                  child: Text(priority.toString().split('.').last),
+                );
+              }).toList(),
+              onChanged: (Priority? newValue) {
+                if (newValue != null) {
                   setState(() {
-                    _priority = newValue!;
+                    _priority = newValue;
                   });
-                },
-                onSaved: (Priority? newValue) {
-                  _priority = newValue!;
-                },
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    final newTask = Task(
-                      author: User(
-                        firstName: 'John', // Replace with actual user data
-                        lastName: 'Doe',
-                        email: 'john.doe@example.com',
-                        password: 'password',
-                      ),
-                      content: _content,
-                      completed: _completed,
-                      tags: [],
-                      createdAt: DateTime.now(),
-                      updatedAt: DateTime.now(),
-                      dueDate: _dueDate,
-                      priority: _priority,
-                    );
+                }
+              },
+              onSaved: (Priority? newValue) {
+                if (newValue != null) {
+                  _priority = newValue;
+                }
+              },
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  final newTask = Task(
+                    author: User(
+                      email: 'test@est.com',
+                      firstName: 'Tester',
+                      lastName: 'Laster',
+                      password: 'Jindz'
+                    ),
+                    content: _content,
+                    completed: _completed,
+                    tags: [],
+                    createdAt: widget.formMode == FormMode.Add ? DateTime.now() : widget.task!.createdAt,
+                    updatedAt: DateTime.now(),
+                    dueDate: _dueDate,
+                    priority: _priority,
+                  );
+                  if (widget.formMode == FormMode.Add) {
+                    // Ajouter la nouvelle tâche
                     Provider.of<TasksProvider>(context, listen: false).addTask(newTask);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Task added')),
-                    );
-                    Navigator.pop(context, newTask);
+                  } else if(widget.formMode == FormMode.Edit){
+                    // Mettre à jour la tâche existante
+                    Provider.of<TasksProvider>(context, listen: false).updateTask(_id, newTask);
                   }
-                },
-                child: const Text('Submit'),
-              ),
-            ],
-          ),
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(widget.formMode == FormMode.Add ? 'Add Task' : 'Save Changes'),
+            ),
+          ],
         ),
       ),
     );
