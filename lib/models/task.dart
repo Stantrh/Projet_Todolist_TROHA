@@ -59,7 +59,6 @@ class Task {
     }
 
     if (author != null) {
-      print('AUTHOR ${author}');
       json['user_id'] = author;
     }
       return json;

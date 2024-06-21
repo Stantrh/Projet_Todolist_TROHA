@@ -34,10 +34,8 @@ class TaskService {
 
   Future<void> createTask(Task task) async {
     try {
-      print(task.toJson());
       await _dio.post('tasks', data: task.toJson());
     } catch (e) {
-      print('Error creating task: $e');
       rethrow;
     }
   }
@@ -46,7 +44,6 @@ class TaskService {
     try {
       await _dio.patch('tasks?id=eq.${updatedTask.id}', data: updatedTask.toJson());
     } catch (e) {
-      print('Error updating task: $e');
       rethrow;
     }
   }
@@ -55,7 +52,6 @@ class TaskService {
     try {
       await _dio.delete('tasks?id=eq.${taskToDelete.id}');
     } catch (e) {
-      print('Error deleting task: $e');
       rethrow;
     }
   }

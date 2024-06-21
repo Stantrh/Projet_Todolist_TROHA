@@ -108,6 +108,7 @@ class _TaskFormState extends State<TaskForm> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
+
                   final newTask = Task(
                     content: _content,
                     completed: _completed,
@@ -120,7 +121,6 @@ class _TaskFormState extends State<TaskForm> {
                   if (widget.formMode == FormMode.Add) {
                     Provider.of<TasksProvider>(context, listen: false).addTask(newTask);
                   } else if(widget.formMode == FormMode.Edit){
-                    // Mettre à jour la tâche existante
                     newTask.id = widget.task!.id;
                     Provider.of<TasksProvider>(context, listen: false).updateTask(newTask);
                   }

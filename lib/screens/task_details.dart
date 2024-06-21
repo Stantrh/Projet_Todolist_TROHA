@@ -60,9 +60,8 @@ class TaskDetails extends StatelessWidget {
   final Task task;
   final DateFormat format;
 
-  TaskDetails({Key? key, required this.task, DateFormat? format})
-      : format = format ?? DateFormat('yyyy-MM-dd HH:mm'),
-        super(key: key);
+  TaskDetails({super.key, required this.task, DateFormat? format})
+      : format = format ?? DateFormat('yyyy-MM-dd HH:mm');
 
   @override
   Widget build(BuildContext context) {

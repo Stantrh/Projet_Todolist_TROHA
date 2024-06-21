@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class TaskPreview extends StatelessWidget {
   final Task task;
 
-  TaskPreview({required this.task});
+  const TaskPreview({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {

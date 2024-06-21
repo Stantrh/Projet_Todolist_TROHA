@@ -1,24 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'screens/signin.dart';
 import 'screens/tasks_master.dart';
+import 'providers/user_provider.dart';
 
-
-class TodoListApp extends StatefulWidget{
+class TodoListApp extends StatelessWidget {
   const TodoListApp({super.key});
 
   @override
-  _TodoListAppState createState() => _TodoListAppState();
-}
-
-class _TodoListAppState extends State<TodoListApp>{
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Todo List',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+    final userProvider = Provider.of<UserProvider>(context);
+
+    final GoRouter router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => userProvider.isAuthenticated ? const TasksMaster() : const SignIn(),
         ),
-        home: TasksMaster(),
+        GoRoute(
+          path: '/tasks',
+          builder: (context, state) => const TasksMaster(),
+        ),
+      ],
+      redirect: (context, state) {
+        final isAuthenticated = userProvider.isAuthenticated;
+        final isLoggingIn = state.matchedLocation == '/';
+
+        if (!isAuthenticated && !isLoggingIn) return '/';
+        if (isAuthenticated && isLoggingIn) return '/tasks';
+        return null;
+      },
+    );
+
+    return MaterialApp.router(
+      routerConfig: router,
     );
   }
-
 }
