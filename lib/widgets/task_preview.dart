@@ -3,6 +3,7 @@ import '../models/task.dart';
 import '../screens/task_form.dart';
 import '../providers/tasks_provider.dart';
 import 'package:provider/provider.dart';
+import '../models/priority.dart';
 
 class TaskPreview extends StatelessWidget {
   final Task task;
@@ -11,48 +12,102 @@ class TaskPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(
-        task.completed ? Icons.check_circle : Icons.circle,
-        color: task.completed ? Colors.lightGreen : Colors.grey,
-      ),
-      title: Text(task.content),
-      tileColor: task.completed ? Colors.green[100] : Colors.white54,
+    Color? priorityColor;
+    switch (task.priority) {
+      case Priority.low:
+        priorityColor = Colors.blue[100];
+        break;
+      case Priority.normal:
+        priorityColor = Colors.green[300];
+        break;
+      case Priority.high:
+        priorityColor = Colors.yellow[200];
+        break;
+      default:
+        priorityColor = Colors.white;
+    }
+
+    return GestureDetector(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) => Dialog(
-            child: TaskForm(formMode: FormMode.Edit, task: task),
-          ),
-        );
+        _showTaskDetails(context);
       },
-      trailing: IconButton(
-        icon: const Icon(Icons.delete, color: Colors.red),
-        onPressed: () {
-          _confirmDelete(context);
-        },
+      child: Card(
+        elevation: 4,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        color: priorityColor, // Définir la couleur de fond de la carte ici
+        child: Container(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Icon(
+                  task.completed ? Icons.check_circle : Icons.circle,
+                  color: task.completed ? Colors.lightGreen : Colors.grey,
+                ),
+              ),
+              Expanded(
+                flex: 8,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    task.content,
+                    style: TextStyle(
+                      fontSize: 16,
+                      decoration: task.completed ? TextDecoration.lineThrough : TextDecoration.none,
+                      color: task.completed ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    _confirmDelete(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-
+  void _showTaskDetails(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: TaskForm(formMode: FormMode.Edit, task: task),
+      ),
+    );
+  }
 
   void _confirmDelete(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm the deletion'),
-          content: Text('Do you really wanna delete this task ?'),
+          title: const Text('Confirm Deletion'),
+          content: const Text('Do you really want to delete this task?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Delete'),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
               onPressed: () {
                 Provider.of<TasksProvider>(context, listen: false).removeTask(task);
                 Navigator.of(context).pop();

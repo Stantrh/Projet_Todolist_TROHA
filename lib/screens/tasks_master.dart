@@ -5,7 +5,7 @@ import '../providers/tasks_provider.dart';
 import 'task_form.dart';
 
 class TasksMaster extends StatelessWidget {
-  const TasksMaster({super.key});
+  const TasksMaster({Key? key});
 
   @override
   Widget build(BuildContext context) {
