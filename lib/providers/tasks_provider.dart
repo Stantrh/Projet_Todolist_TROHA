@@ -15,19 +15,19 @@ class TasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTask(Task task) {
-    _taskService.createTask(task);
-    notifyListeners();
+  void addTask(Task task) async {
+    await _taskService.createTask(task);
+    fetchTasks();
   }
 
-  void removeTask(Task task) {
-    _tasks.remove(task);
-    notifyListeners();
+  void removeTask(Task task) async{
+    await _taskService.removeTask(task);
+    fetchTasks();
   }
 
-  void updateTask(String id, Task task){
-    _taskService.updateTask(id, task);
-    notifyListeners();
+  void updateTask(Task task) async {
+    await _taskService.updateTask(task);
+    fetchTasks();
   }
 
   Task? getTaskById(String id) {

@@ -109,12 +109,6 @@ class _TaskFormState extends State<TaskForm> {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
                   final newTask = Task(
-                    author: User(
-                      email: 'test@est.com',
-                      firstName: 'Tester',
-                      lastName: 'Laster',
-                      password: 'Jindz'
-                    ),
                     content: _content,
                     completed: _completed,
                     tags: [],
@@ -124,11 +118,11 @@ class _TaskFormState extends State<TaskForm> {
                     priority: _priority,
                   );
                   if (widget.formMode == FormMode.Add) {
-                    // Ajouter la nouvelle tâche
                     Provider.of<TasksProvider>(context, listen: false).addTask(newTask);
                   } else if(widget.formMode == FormMode.Edit){
                     // Mettre à jour la tâche existante
-                    Provider.of<TasksProvider>(context, listen: false).updateTask(_id, newTask);
+                    newTask.id = widget.task!.id;
+                    Provider.of<TasksProvider>(context, listen: false).updateTask(newTask);
                   }
                   Navigator.pop(context);
                 }

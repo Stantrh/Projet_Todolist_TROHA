@@ -6,15 +6,11 @@ var uuid = const Uuid();
 
 class User {
   String id;
-  String firstName;
-  String lastName;
   String email;
   String password;
   List<Task> tasks;
 
   User({
-    required this.firstName,
-    required this.lastName,
     required this.email,
     required this.password,
     List<Task>? tasks,
@@ -24,6 +20,22 @@ class User {
 
   @override
   String toString() {
-    return 'User(id: $id, firstName: $firstName, lastName: $lastName, email: $email)';
+    return 'User(id: $id, email: $email)';
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      email: json['email'],
+      password: json['encrypted_password'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'encrypted_password': password,
+    };
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/task.dart';
-import '../screens/task_form.dart'; // Assurez-vous d'importer TaskForm
+import '../screens/task_form.dart';
+import '../providers/tasks_provider.dart';
+import 'package:provider/provider.dart';
 
 class TaskPreview extends StatelessWidget {
   final Task task;
@@ -24,6 +26,12 @@ class TaskPreview extends StatelessWidget {
           ),
         );
       },
+      trailing: IconButton(
+        icon: const Icon(Icons.delete, color: Colors.red),
+        onPressed: () {
+          Provider.of<TasksProvider>(context, listen: false).removeTask(task);
+        },
+      ),
     );
   }
 }

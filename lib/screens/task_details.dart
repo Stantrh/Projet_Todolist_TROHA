@@ -85,7 +85,6 @@ class TaskDetails extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Afficher TaskForm en tant que boîte de dialogue pour éditer la tâche
                 showDialog(
                   context: context,
                   builder: (context) => Dialog(
