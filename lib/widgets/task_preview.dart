@@ -29,9 +29,38 @@ class TaskPreview extends StatelessWidget {
       trailing: IconButton(
         icon: const Icon(Icons.delete, color: Colors.red),
         onPressed: () {
-          Provider.of<TasksProvider>(context, listen: false).removeTask(task);
+          _confirmDelete(context);
         },
       ),
+    );
+  }
+
+
+
+  void _confirmDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm the deletion'),
+          content: Text('Do you really wanna delete this task ?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Provider.of<TasksProvider>(context, listen: false).removeTask(task);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
